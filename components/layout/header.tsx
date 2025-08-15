@@ -148,7 +148,7 @@ export function Header() {
                 <Button variant="ghost" onClick={() => signIn()}>
                   Log in
                 </Button>
-                <Button onClick={() => signIn()} className="bg-chazon-primary hover:bg-chazon-primary-dark">
+                <Button onClick={() => window.location.href = '/auth/signup'} className="bg-chazon-primary hover:bg-chazon-primary-dark">
                   Sign up
                 </Button>
               </div>
@@ -241,7 +241,7 @@ export function Header() {
                 </button>
                 <button
                   onClick={() => {
-                    signIn()
+                    window.location.href = '/auth/signup'
                     setIsMenuOpen(false)
                   }}
                   className="block w-full text-left px-3 py-2 text-white bg-chazon-primary rounded-md"
