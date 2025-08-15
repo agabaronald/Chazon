@@ -43,6 +43,7 @@ type ServiceDetails = Prisma.ServiceGetPayload<{
 
 interface ServiceDetailPageProps {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 async function getServiceDetails(id: string): Promise<ServiceDetails | null> {
@@ -58,8 +59,10 @@ async function getServiceDetails(id: string): Promise<ServiceDetails | null> {
   }
 }
 
-export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
+export default async function ServiceDetailPage({ params, searchParams }: ServiceDetailPageProps) {
   const { id } = await params
+  // We don't use searchParams in this page, but it's required by Next.js 15
+  await searchParams
   const service = await getServiceDetails(id)
 
   if (!service) {

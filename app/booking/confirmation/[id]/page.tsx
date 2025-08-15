@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 interface BookingConfirmationPageProps {
   params: Promise<{ id: string }>
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 async function getBookingDetails(id: string) {
