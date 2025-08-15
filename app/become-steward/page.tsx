@@ -252,7 +252,7 @@ export default async function BecomeStewardPage() {
                 <p className="text-lg text-gray-700 mb-6">
                   Please sign in to apply to become a Steward.
                 </p>
-                <a href="/api/auth/signin">
+                <a href="/auth/signin">
                   <Button
                     className="bg-chazon-primary hover:bg-chazon-primary-dark text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
                   >
