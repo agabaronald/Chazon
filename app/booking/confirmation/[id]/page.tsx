@@ -6,7 +6,7 @@ import { CheckCircle, Calendar, MapPin, Clock, FileText } from 'lucide-react'
 import Link from 'next/link'
 
 interface BookingConfirmationPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
   searchParams: { [key: string]: string | string[] | undefined }
 }
 
@@ -46,7 +46,8 @@ async function getBookingDetails(id: string) {
 }
 
 export default async function BookingConfirmationPage({ params, searchParams }: BookingConfirmationPageProps) {
-  const booking = await getBookingDetails(params.id)
+  const { id } = await params
+  const booking = await getBookingDetails(id)
 
   if (!booking) {
     notFound()
@@ -146,12 +147,12 @@ export default async function BookingConfirmationPage({ params, searchParams }: 
                     {booking.service.steward.image ? (
                       <img
                         src={booking.service.steward.image}
-                        alt={booking.service.steward.name}
+                        alt={booking.service.steward.name || 'Steward'}
                         className="h-full w-full object-cover"
                       />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center bg-gray-200 text-gray-400">
-                        {booking.service.steward.name.charAt(0)}
+                        {booking.service.steward.name?.charAt(0) || 'S'}
                       </div>
                     )}
                   </div>

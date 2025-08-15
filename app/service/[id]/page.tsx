@@ -42,7 +42,7 @@ type ServiceDetails = Prisma.ServiceGetPayload<{
 }>
 
 interface ServiceDetailPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 async function getServiceDetails(id: string): Promise<ServiceDetails | null> {
@@ -59,7 +59,8 @@ async function getServiceDetails(id: string): Promise<ServiceDetails | null> {
 }
 
 export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
-  const service = await getServiceDetails(params.id)
+  const { id } = await params
+  const service = await getServiceDetails(id)
 
   if (!service) {
     notFound()
