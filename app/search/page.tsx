@@ -39,11 +39,15 @@ async function searchServices(query: string) {
 }
 
 interface SearchPageProps {
-  searchParams: Record<string, string | string[] | undefined>
+  params: Promise<{}>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const query = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q || ''
+export default async function SearchPage({ params, searchParams }: SearchPageProps) {
+  // We don't use params in this page, but it's required by Next.js 15
+  await params
+  const resolvedSearchParams = await searchParams
+  const query = Array.isArray(resolvedSearchParams.q) ? resolvedSearchParams.q[0] : resolvedSearchParams.q || ''
   const services = await searchServices(query)
 
   return (

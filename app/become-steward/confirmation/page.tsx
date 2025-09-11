@@ -42,7 +42,8 @@ export default async function StewardApplicationConfirmationPage() {
     redirect('/become-steward')
   }
 
-  const applicationStatus = stewardProfile.applicationStatus
+  // Application is always pending at this stage
+  const applicationStatus = 'PENDING'
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -79,26 +80,12 @@ export default async function StewardApplicationConfirmationPage() {
                   <h3 className="text-lg font-medium text-gray-900 mb-3">Application Status</h3>
                   <div className="flex items-center">
                     <div className="mr-3">
-                      {applicationStatus === 'PENDING' && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                          Pending Review
-                        </span>
-                      )}
-                      {applicationStatus === 'APPROVED' && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                          Approved
-                        </span>
-                      )}
-                      {applicationStatus === 'REJECTED' && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                          Not Approved
-                        </span>
-                      )}
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                        Pending Review
+                      </span>
                     </div>
                     <p className="text-gray-600">
-                      {applicationStatus === 'PENDING' && 'Your application is currently being reviewed by our team.'}
-                      {applicationStatus === 'APPROVED' && 'Congratulations! Your application has been approved.'}
-                      {applicationStatus === 'REJECTED' && 'Unfortunately, your application was not approved at this time.'}
+                      Your application is currently being reviewed by our team.
                     </p>
                   </div>
                 </div>

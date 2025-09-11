@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const skills = formData.getAll('skills') as string[]
     const experience = formData.get('experience') as string
     const availability = formData.get('availability') as string
-    const serviceArea = parseInt(formData.get('serviceArea') as string)
+    // Note: serviceArea field doesn't exist in the model, so we'll skip it
     const hourlyRate = parseFloat(formData.get('hourlyRate') as string)
 
     // Validate required fields
@@ -40,15 +40,21 @@ export async function POST(req: NextRequest) {
       return new NextResponse('Steward profile not found', { status: 404 })
     }
 
+    // Update user bio
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        bio,
+      },
+    })
+
     // Update steward profile
     const updatedStewardProfile = await prisma.stewardProfile.update({
       where: { id: user.stewardProfile.id },
       data: {
-        bio,
         skills,
         experience,
         availability,
-        serviceArea,
         hourlyRate: hourlyRate || user.stewardProfile.hourlyRate,
       },
     })

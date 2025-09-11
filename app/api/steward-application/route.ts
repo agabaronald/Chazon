@@ -18,13 +18,13 @@ export async function POST(req: NextRequest) {
     const skills = formData.getAll('skills') as string[]
     const experience = formData.get('experience') as string
     const availability = formData.get('availability') as string
-    const serviceArea = parseInt(formData.get('serviceArea') as string)
+    // Note: serviceArea field doesn't exist in the model, so we'll skip it
     const bio = formData.get('bio') as string
     const termsAccepted = formData.get('terms') === 'on'
     const backgroundCheckConsent = formData.get('backgroundCheck') === 'on'
 
     // Validate required fields
-    if (!skills.length || !experience || !availability || !serviceArea || !bio) {
+    if (!skills.length || !experience || !availability || !bio) {
       return new NextResponse('Missing required fields', { status: 400 })
     }
 
@@ -46,19 +46,23 @@ export async function POST(req: NextRequest) {
       return new NextResponse('You are already a steward', { status: 400 })
     }
 
+    // Update user bio
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        bio,
+        isSteward: true, // Mark user as steward
+      },
+    })
+
     // Create steward profile
     const stewardProfile = await prisma.stewardProfile.create({
       data: {
         userId: user.id,
-        bio,
         skills,
         experience,
         availability,
-        serviceArea,
-        isVerified: false, // Requires admin verification
-        rating: 0,
-        totalReviews: 0,
-        applicationStatus: 'PENDING',
+        hourlyRate: 0, // Default hourly rate
       },
     })
 

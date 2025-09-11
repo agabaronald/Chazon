@@ -45,7 +45,8 @@ type Services = Awaited<ReturnType<typeof getServices>>
 export type ServiceCardType = Services[number]
 
 interface ServicesPageProps {
-  searchParams: Record<string, string | string[] | undefined>
+  params: Promise<{}>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 async function getCategories() {
@@ -57,11 +58,14 @@ async function getCategories() {
   }
 }
 
-export default async function ServicesPage({ searchParams }: ServicesPageProps) {
+export default async function ServicesPage({ params, searchParams }: ServicesPageProps) {
+  // We don't use params in this page, but it's required by Next.js 15
+  await params
+  const resolvedSearchParams = await searchParams
   const filters = {
-    category: searchParams.category as string,
-    price: searchParams.price as string,
-    sortBy: searchParams.sortBy as string,
+    category: resolvedSearchParams.category as string,
+    price: resolvedSearchParams.price as string,
+    sortBy: resolvedSearchParams.sortBy as string,
   }
 
   const services = await getServices(filters)

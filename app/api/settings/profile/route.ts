@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     // Extract form data
     const name = formData.get('name') as string
     const phone = formData.get('phone') as string
-    const address = formData.get('address') as string
+    const location = formData.get('address') as string // Form field is 'address' but DB field is 'location'
 
     // Validate required fields
     if (!name) {
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         phone,
-        address,
+        location, // Using location field instead of address
       },
     })
 
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         name: updatedUser.name,
         email: updatedUser.email,
         phone: updatedUser.phone,
-        address: updatedUser.address,
+        address: updatedUser.location, // Map location back to address for the frontend
       },
       redirect: '/settings'
     })

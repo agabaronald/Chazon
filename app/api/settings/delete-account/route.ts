@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
       where: { email: session.user.email },
       include: {
         stewardProfile: true,
-        bookings: true,
+        bookingsAsClient: true,
+        bookingsAsSteward: true,
       },
     })
 
@@ -25,9 +26,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user has active bookings
-    const hasActiveBookings = user.bookings.some(
+    const hasActiveClientBookings = user.bookingsAsClient.some(
       booking => booking.status === 'CONFIRMED' || booking.status === 'PENDING'
     )
+    
+    const hasActiveStewardBookings = user.bookingsAsSteward.some(
+      booking => booking.status === 'CONFIRMED' || booking.status === 'PENDING'
+    )
+    
+    const hasActiveBookings = hasActiveClientBookings || hasActiveStewardBookings
 
     if (hasActiveBookings) {
       return NextResponse.json({
@@ -43,9 +50,14 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // Delete user's bookings
+    // Delete user's bookings as client
     await prisma.booking.deleteMany({
-      where: { userId: user.id },
+      where: { clientId: user.id },
+    })
+    
+    // Delete user's bookings as steward
+    await prisma.booking.deleteMany({
+      where: { stewardId: user.id },
     })
 
     // Delete user

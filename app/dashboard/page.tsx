@@ -186,7 +186,7 @@ export default async function DashboardPage() {
                         <dt className="text-sm font-medium text-gray-500 truncate">Rating</dt>
                         <dd>
                           <div className="text-lg font-medium text-gray-900">
-                            {user.stewardProfile?.rating?.toFixed(1) || 'New'}
+                            {user.rating?.toFixed(1) || 'New'}
                           </div>
                         </dd>
                       </dl>

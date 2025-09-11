@@ -168,12 +168,12 @@ export default async function BookingsPage() {
                                   {booking.service.steward.image ? (
                                     <img
                                       src={booking.service.steward.image}
-                                      alt={booking.service.steward.name}
+                                      alt={booking.service.steward.name || 'Steward'}
                                       className="h-full w-full object-cover"
                                     />
                                   ) : (
                                     <div className="h-full w-full flex items-center justify-center bg-gray-200 text-gray-400">
-                                      {booking.service.steward.name.charAt(0)}
+                                      {booking.service.steward.name ? booking.service.steward.name.charAt(0) : 'S'}
                                     </div>
                                   )}
                                 </div>

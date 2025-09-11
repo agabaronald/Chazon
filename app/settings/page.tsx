@@ -5,8 +5,11 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { ProfileSettingsForm } from './profile-settings-form'
+import { ProfileSettingsWrapper } from './profile-settings-wrapper'
 import { StewardProfileSettingsForm } from './steward-profile-settings-form'
+import { StewardProfileWrapper } from './steward-profile-wrapper'
 import { AccountSettingsForm } from './account-settings-form'
+import { AccountSettingsWrapper } from './account-settings-wrapper'
 import { DeleteAccountButton } from './delete-account-button'
 import { ChangePasswordForm } from './change-password-form'
 
@@ -63,7 +66,7 @@ export default async function SettingsPage() {
               </div>
             </div>
             <div className="mt-5 md:mt-0 md:col-span-2">
-              <ProfileSettingsForm user={user} />
+              <ProfileSettingsWrapper user={user} />
             </div>
           </div>
 
@@ -86,7 +89,7 @@ export default async function SettingsPage() {
                   </div>
                 </div>
                 <div className="mt-5 md:mt-0 md:col-span-2">
-                  <StewardProfileSettingsForm stewardProfile={user.stewardProfile} />
+                  <StewardProfileWrapper stewardProfile={user.stewardProfile} />
                 </div>
               </div>
             </div>
@@ -110,7 +113,7 @@ export default async function SettingsPage() {
                 </div>
               </div>
               <div className="mt-5 md:mt-0 md:col-span-2">
-                <AccountSettingsForm user={user} />
+                <AccountSettingsWrapper user={user} />
                 
                 <div className="mt-6 shadow sm:rounded-md sm:overflow-hidden">
                   <div className="px-4 py-5 bg-white space-y-6 sm:p-6">

@@ -23,18 +23,11 @@ async function getUserProfile() {
         stewardProfile: true,
         reviewsReceived: {
           include: {
-            client: {
+            reviewer: {
               select: {
                 id: true,
                 name: true,
                 image: true,
-              },
-            },
-            service: {
-              select: {
-                id: true,
-                title: true,
-                category: true,
               },
             },
           },
@@ -95,11 +88,11 @@ export default async function ProfilePage() {
                   <h1 className="text-3xl font-bold">{user.name}</h1>
                   <p className="mt-1 text-lg">
                     {isSteward ? 'Steward' : 'Customer'}
-                    {isSteward && user.stewardProfile?.rating && (
+                    {isSteward && user.rating > 0 && (
                       <span className="ml-2 inline-flex items-center">
                         <Star className="h-4 w-4 mr-1 fill-current" />
-                        {user.stewardProfile.rating.toFixed(1)}
-                        <span className="ml-1 text-sm">({user.stewardProfile.totalReviews || 0})</span>
+                        {user.rating.toFixed(1)}
+                        <span className="ml-1 text-sm">({user.totalReviews || 0})</span>
                       </span>
                     )}
                   </p>
@@ -132,7 +125,7 @@ export default async function ProfilePage() {
                 </div>
                 <div className="flex items-center">
                   <MapPin className="h-5 w-5 text-gray-400 mr-2" />
-                  <span className="text-gray-900">{user.address || 'Not provided'}</span>
+                  <span className="text-gray-900">{user.location || 'Not provided'}</span>
                 </div>
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 text-gray-400 mr-2" />
@@ -149,7 +142,7 @@ export default async function ProfilePage() {
                 <h2 className="text-lg leading-6 font-medium text-gray-900">Steward Information</h2>
                 <div className="mt-4">
                   <h3 className="text-md font-medium text-gray-900">Bio</h3>
-                  <p className="mt-1 text-gray-600">{user.stewardProfile.bio || 'No bio provided.'}</p>
+                  <p className="mt-1 text-gray-600">{user.bio || 'No bio provided.'}</p>
                 </div>
                 <div className="mt-4">
                   <h3 className="text-md font-medium text-gray-900">Skills</h3>
@@ -185,15 +178,15 @@ export default async function ProfilePage() {
                       <div className="flex items-start">
                         <div className="flex-shrink-0">
                           <Avatar className="h-10 w-10">
-                            <AvatarImage src={review.client.image || ''} alt={review.client.name || ''} />
+                            <AvatarImage src={review.reviewer.image || ''} alt={review.reviewer.name || ''} />
                             <AvatarFallback>
-                              {review.client.name?.charAt(0) || <User className="w-4 h-4" />}
+                              {review.reviewer.name?.charAt(0) || <User className="w-4 h-4" />}
                             </AvatarFallback>
                           </Avatar>
                         </div>
                         <div className="ml-3 flex-1">
                           <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-medium text-gray-900">{review.client.name}</h3>
+                            <h3 className="text-sm font-medium text-gray-900">{review.reviewer.name}</h3>
                             <p className="text-sm text-gray-500">
                               {new Date(review.createdAt).toLocaleDateString('en-US', {
                                 month: 'short',
@@ -210,7 +203,7 @@ export default async function ProfilePage() {
                               />
                             ))}
                             <span className="ml-2 text-sm text-gray-500">
-                              for {review.service.title} ({review.service.category.name})
+                              Review from {review.reviewer.name || 'Anonymous'}
                             </span>
                           </div>
                           <p className="mt-2 text-sm text-gray-600">{review.comment}</p>
