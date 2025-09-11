@@ -45,8 +45,7 @@ interface SearchPageProps {
 
 export default async function SearchPage({ params, searchParams }: SearchPageProps) {
   // We don't use params in this page, but it's required by Next.js 15
-  await params
-  const resolvedSearchParams = await searchParams
+  const resolvedSearchParams = await searchParams;
   const query = Array.isArray(resolvedSearchParams.q) ? resolvedSearchParams.q[0] : resolvedSearchParams.q || ''
   const services = await searchServices(query)
 
