@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import bcrypt from 'bcryptjs'
 
 export async function POST(req: NextRequest) {
+  /* Backend function commented out to keep only frontend working
   try {
     const session = await getServerSession(authOptions)
     
@@ -72,4 +73,11 @@ export async function POST(req: NextRequest) {
     console.error('[CHANGE_PASSWORD_POST]', error)
     return new NextResponse('Internal error', { status: 500 })
   }
+  */
+  
+  // Return mock success response
+  return NextResponse.json({
+    success: true,
+    message: 'Password changed successfully',
+  })
 }

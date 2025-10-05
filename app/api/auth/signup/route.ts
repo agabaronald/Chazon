@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
+  /* Backend function commented out to keep only frontend working
   try {
     const { name, email, password } = await req.json()
 
@@ -44,4 +45,11 @@ export async function POST(req: Request) {
       { status: 500 }
     )
   }
+  */
+  
+  // Return mock success response
+  return NextResponse.json(
+    { message: 'User created successfully', user: { id: 'mock-id', name: 'Mock User', email: 'mock@example.com' } },
+    { status: 201 }
+  )
 }

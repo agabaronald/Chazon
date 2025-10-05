@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
+  /* Backend function commented out to keep only frontend working
   const session = await getServerSession(authOptions)
 
   if (!session || !session.user?.id) {
@@ -46,4 +47,8 @@ export async function POST(req: Request) {
     console.error('[BOOKINGS_POST]', error)
     return new NextResponse('Internal error', { status: 500 })
   }
+  */
+  
+  // Return mock success response
+  return NextResponse.json({ success: true, id: 'mock-booking-id' })
 }

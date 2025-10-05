@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
 export async function POST(req: NextRequest) {
+  /* Backend function commented out to keep only frontend working
   try {
     const session = await getServerSession(authOptions)
     
@@ -49,4 +50,19 @@ export async function POST(req: NextRequest) {
     console.error('[SETTINGS_PROFILE_POST]', error)
     return new NextResponse('Internal error', { status: 500 })
   }
+  */
+  
+  // Return mock success response
+  return NextResponse.json({
+    success: true,
+    message: 'Profile updated successfully',
+    user: {
+      id: 'mock-id',
+      name: 'Mock User',
+      email: 'mock@example.com',
+      phone: '123-456-7890',
+      address: 'Mock Address',
+    },
+    redirect: '/settings'
+  })
 }
