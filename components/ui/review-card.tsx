@@ -2,17 +2,20 @@
 
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import type { Prisma } from '@prisma/client'
+interface Reviewer {
+  name?: string | null
+  image?: string | null
+}
 
-// Use a Prisma-generated type for the review, including the reviewer's details.
-export type ReviewWithReviewer = Prisma.ReviewGetPayload<{
-  include: {
-    reviewer: { select: { name: true; image: true } }
-  }
-}>
+interface ReviewCardReview {
+  reviewer: Reviewer
+  rating: number
+  comment?: string | null
+  createdAt: string | Date
+}
 
 interface ReviewCardProps {
-  review: ReviewWithReviewer
+  review: ReviewCardReview
 }
 
 export function ReviewCard({ review }: ReviewCardProps) {
