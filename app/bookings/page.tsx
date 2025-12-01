@@ -183,4 +183,4 @@ export default function BookingsPage() {
     </div>
   )
 }
-import Image from 'next/image'
+//
