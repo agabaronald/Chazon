@@ -8,35 +8,35 @@ import { useState } from 'react'
 
 const footerLinks = {
   services: [
-    { name: 'Furniture Assembly', href: '/services/furniture-assembly' },
-    { name: 'Moving Help', href: '/services/moving' },
-    { name: 'Cleaning', href: '/services/cleaning' },
-    { name: 'Handyman', href: '/services/handyman' },
-    { name: 'TV Mounting', href: '/services/tv-mounting' },
-    { name: 'Delivery', href: '/services/delivery' }
+    { name: 'Furniture Assembly', href: '/services?category=furniture-assembly' },
+    { name: 'Moving Help', href: '/services?category=moving' },
+    { name: 'Cleaning', href: '/services?category=cleaning' },
+    { name: 'Handyman', href: '/services?category=handyman' },
+    { name: 'TV Mounting', href: '/search?q=tv%20mounting' },
+    { name: 'Delivery', href: '/search?q=delivery' }
   ],
   company: [
-    { name: 'About Us', href: '/about' },
-    { name: 'How It Works', href: '/how-it-works' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Press', href: '/press' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Contact', href: '/contact' }
+    { name: 'About Us', href: '/' },
+    { name: 'How It Works', href: '/become-steward#how-it-works' },
+    { name: 'Careers', href: '/' },
+    { name: 'Press', href: '/' },
+    { name: 'Blog', href: '/' },
+    { name: 'Contact', href: '/' }
   ],
   support: [
-    { name: 'Help Center', href: '/help' },
-    { name: 'Safety', href: '/safety' },
-    { name: 'Trust & Safety', href: '/trust-safety' },
-    { name: 'Terms of Service', href: '/terms' },
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Cookie Policy', href: '/cookies' }
+    { name: 'Help Center', href: '/' },
+    { name: 'Safety', href: '/' },
+    { name: 'Trust & Safety', href: '/' },
+    { name: 'Terms of Service', href: '/' },
+    { name: 'Privacy Policy', href: '/' },
+    { name: 'Cookie Policy', href: '/' }
   ],
   stewards: [
     { name: 'Become a Steward', href: '/become-steward' },
-    { name: 'Steward App', href: '/steward-app' },
-    { name: 'Steward Resources', href: '/steward-resources' },
-    { name: 'Community Guidelines', href: '/community-guidelines' },
-    { name: 'Success Stories', href: '/success-stories' }
+    { name: 'Steward App', href: '/become-steward' },
+    { name: 'Steward Resources', href: '/become-steward' },
+    { name: 'Community Guidelines', href: '/become-steward' },
+    { name: 'Success Stories', href: '/become-steward#testimonials' }
   ]
 }
 
@@ -131,8 +131,9 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.services.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    href={link.href} 
+                  <Link
+                    href={link.href}
+                    prefetch={false}
                     className="text-gray-400 hover:text-chazon-primary transition-colors"
                   >
                     {link.name}
@@ -148,8 +149,9 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    href={link.href} 
+                  <Link
+                    href={link.href}
+                    prefetch={false}
                     className="text-gray-400 hover:text-chazon-primary transition-colors"
                   >
                     {link.name}
@@ -165,8 +167,9 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    href={link.href} 
+                  <Link
+                    href={link.href}
+                    prefetch={false}
                     className="text-gray-400 hover:text-chazon-primary transition-colors"
                   >
                     {link.name}
@@ -182,8 +185,9 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.stewards.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    href={link.href} 
+                  <Link
+                    href={link.href}
+                    prefetch={false}
                     className="text-gray-400 hover:text-chazon-primary transition-colors"
                   >
                     {link.name}
