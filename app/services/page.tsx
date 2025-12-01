@@ -2,60 +2,40 @@ import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { ServiceCard } from '@/components/ui/service-card'
 import { ServiceFilterSidebar } from '@/components/ui/service-filter-sidebar'
-import { prisma } from '@/lib/prisma'
+import { services as allServices } from '@/data/services'
+import { categories as allCategories } from '@/data/categories'
+import { Pagination } from '@/components/ui/pagination'
+import { FilterChips } from '@/components/ui/filter-chips'
 
 // This function fetches the services and its return type will be used to infer the service type
-async function getServices(filters: { category?: string; price?: string; sortBy?: string }) {
+async function getServices(filters: { category?: string; price?: string; sortBy?: string; page?: number; pageSize?: number }) {
   const { category, price, sortBy } = filters
-  const [sortField, sortOrder] = sortBy?.split(':') || ['createdAt', 'desc']
-
-  try {
-    const services = await prisma.service.findMany({
-      where: {
-        isActive: true,
-        ...(category && { category: { slug: category } }),
-        ...(price && { price: { lte: parseInt(price) } }),
-      },
-      include: {
-        category: true,
-        steward: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-            rating: true,
-            totalReviews: true,
-          },
-        },
-      },
-      orderBy: {
-        [sortField]: sortOrder,
-      },
-    })
-
-    return services
-  } catch (error) {
-    console.error('Failed to fetch services:', error)
-    return []
-  }
+  const [sortField, sortOrder] = sortBy?.split(':') || ['price', 'desc']
+  let filtered = allServices
+  if (category) filtered = filtered.filter(s => s.category.slug === category)
+  if (price) filtered = filtered.filter(s => s.price <= parseInt(price))
+  filtered = [...filtered].sort((a, b) => {
+    const dir = sortOrder === 'asc' ? 1 : -1
+    if (sortField === 'price') return (a.price - b.price) * dir
+    return dir
+  })
+  const page = filters.page && filters.page > 0 ? filters.page : 1
+  const pageSize = filters.pageSize && filters.pageSize > 0 ? filters.pageSize : 9
+  const start = (page - 1) * pageSize
+  const items = filtered.slice(start, start + pageSize)
+  return { items, total: filtered.length, page, pageSize }
 }
 
 // Infer the service type from the actual data being fetched
-type Services = Awaited<ReturnType<typeof getServices>>
-export type ServiceCardType = Services[number]
+import type { Service as ServiceCardType } from '@/types/service'
 
 interface ServicesPageProps {
-  params: Promise<{}>
+  params: Promise<Record<string, string>>
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 async function getCategories() {
-  try {
-    return await prisma.category.findMany({ where: { isActive: true } })
-  } catch (error) {
-    console.error('Failed to fetch categories:', error)
-    return []
-  }
+  return allCategories
 }
 
 export default async function ServicesPage({ params, searchParams }: ServicesPageProps) {
@@ -66,9 +46,11 @@ export default async function ServicesPage({ params, searchParams }: ServicesPag
     category: resolvedSearchParams.category as string,
     price: resolvedSearchParams.price as string,
     sortBy: resolvedSearchParams.sortBy as string,
+    page: resolvedSearchParams.page ? parseInt(resolvedSearchParams.page as string) : 1,
+    pageSize: resolvedSearchParams.pageSize ? parseInt(resolvedSearchParams.pageSize as string) : 9,
   }
 
-  const services = await getServices(filters)
+  const { items, total, page, pageSize } = await getServices(filters)
   const categories = await getCategories()
   const currentCategory = categories.find(c => c.slug === filters.category)
 
@@ -82,6 +64,7 @@ export default async function ServicesPage({ params, searchParams }: ServicesPag
               <ServiceFilterSidebar categories={categories} />
             </div>
             <div className="lg:col-span-3">
+              <FilterChips />
               <div className="mb-8">
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                   {currentCategory ? `${currentCategory.name} Services` : 'All Services'}
@@ -93,9 +76,9 @@ export default async function ServicesPage({ params, searchParams }: ServicesPag
                 </p>
               </div>
 
-              {services.length > 0 ? (
+              {items.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                  {services.map((service) => (
+                  {items.map((service) => (
                     <ServiceCard key={service.id} service={service} />
                   ))}
                 </div>
@@ -106,6 +89,8 @@ export default async function ServicesPage({ params, searchParams }: ServicesPag
                   </p>
                 </div>
               )}
+
+              <Pagination total={total} page={page} pageSize={pageSize} />
             </div>
           </div>
         </div>

@@ -1,69 +1,19 @@
+"use client"
+
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
-import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { User, Mail, Phone, MapPin, Calendar, Star } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Link from 'next/link'
+import { useAuthStore } from '@/store/auth'
 
-async function getUserProfile() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session?.user?.email) {
-    return { user: null, isSteward: false, reviews: [] }
-  }
+export default function ProfilePage() {
+  const { isAuthenticated, user } = useAuthStore()
+  const isSteward = !!user?.isSteward
+  const reviews: any[] = []
 
-  try {
-    // Get user with steward profile
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: {
-        stewardProfile: true,
-        reviewsReceived: {
-          include: {
-            reviewer: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-          take: 5,
-        },
-      },
-    })
-
-    if (!user) {
-      return { user: null, isSteward: false, reviews: [] }
-    }
-
-    return { 
-      user, 
-      isSteward: !!user.stewardProfile,
-      reviews: user.reviewsReceived || [],
-    }
-  } catch (error) {
-    console.error('Failed to fetch user profile:', error)
-    return { user: null, isSteward: false, reviews: [] }
-  }
-}
-
-export default async function ProfilePage() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session) {
-    redirect('/auth/signin')
-  }
-
-  const { user, isSteward, reviews } = await getUserProfile()
-
-  if (!user) {
+  if (!isAuthenticated || !user) {
     redirect('/auth/signin')
   }
 
@@ -88,16 +38,16 @@ export default async function ProfilePage() {
                   <h1 className="text-3xl font-bold">{user.name}</h1>
                   <p className="mt-1 text-lg">
                     {isSteward ? 'Steward' : 'Customer'}
-                    {isSteward && user.rating > 0 && (
+                    {isSteward && (user.rating || 0) > 0 && (
                       <span className="ml-2 inline-flex items-center">
                         <Star className="h-4 w-4 mr-1 fill-current" />
-                        {user.rating.toFixed(1)}
+                        {(user.rating || 0).toFixed(1)}
                         <span className="ml-1 text-sm">({user.totalReviews || 0})</span>
                       </span>
                     )}
                   </p>
                   <p className="mt-1">
-                    Member since {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                    Member since {new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                   </p>
                 </div>
                 <div className="mt-4 sm:mt-0 sm:ml-auto">
@@ -130,40 +80,19 @@ export default async function ProfilePage() {
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 text-gray-400 mr-2" />
                   <span className="text-gray-900">
-                    Joined {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    Joined {new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Steward Information (if applicable) */}
-            {isSteward && user.stewardProfile && (
+            {isSteward && (
               <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
                 <h2 className="text-lg leading-6 font-medium text-gray-900">Steward Information</h2>
                 <div className="mt-4">
                   <h3 className="text-md font-medium text-gray-900">Bio</h3>
                   <p className="mt-1 text-gray-600">{user.bio || 'No bio provided.'}</p>
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-md font-medium text-gray-900">Skills</h3>
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    {user.stewardProfile.skills && user.stewardProfile.skills.length > 0 ? (
-                      user.stewardProfile.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-chazon-primary-light text-chazon-primary"
-                        >
-                          {skill}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-gray-600">No skills listed.</span>
-                    )}
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-md font-medium text-gray-900">Experience</h3>
-                  <p className="mt-1 text-gray-600">{user.stewardProfile.experience || 'No experience information provided.'}</p>
                 </div>
               </div>
             )}

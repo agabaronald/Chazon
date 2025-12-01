@@ -2,7 +2,7 @@
 
 A full-featured Chazon app built with Next.js 14, Prisma, and modern web technologies. This platform connects customers with skilled service providers (Stewards) for various everyday tasks.
 
-## 🚀 Features
+## 🚀 Features (Frontend-Only)
 
 ### For Customers
 - **Service Discovery**: Browse and search through various service categories
@@ -41,12 +41,7 @@ A full-featured Chazon app built with Next.js 14, Prisma, and modern web technol
 - **Zustand** - State management
 
 ### Backend
-- **Next.js API Routes** - Serverless API endpoints
-- **Prisma** - Database ORM and migrations
-- **PostgreSQL** - Primary database
-- **NextAuth.js** - Authentication solution
-- **Stripe** - Payment processing
-- **Cloudinary** - Image upload and management
+This repository is configured as frontend-only. All backend features are intentionally disabled and replaced with mock data and client-side state.
 
 ### Development Tools
 - **ESLint** - Code linting
@@ -59,10 +54,7 @@ A full-featured Chazon app built with Next.js 14, Prisma, and modern web technol
 Before running this project, make sure you have:
 
 - Node.js 18+ installed
-- PostgreSQL database (local or cloud)
-- Stripe account for payments
-- Cloudinary account for image uploads
-- Google/GitHub OAuth apps (optional)
+No backend services required.
 
 ## 🚀 Getting Started
 
@@ -87,7 +79,7 @@ Copy the example environment file and configure your variables:
 cp .env.example .env.local
 ```
 
-Update `.env.local` with your configuration:
+No environment configuration is necessary for frontend-only mode.
 
 ```env
 # Database
@@ -114,18 +106,8 @@ CLOUDINARY_API_KEY="your-api-key"
 CLOUDINARY_API_SECRET="your-api-secret"
 ```
 
-### 4. Database Setup
-
-```bash
-# Generate Prisma client
-npm run db:generate
-
-# Push database schema
-npm run db:push
-
-# Seed the database with sample data
-npm run db:seed
-```
+### 4. Mock Data
+The app uses in-repo mock data under `data/` and simple client-side stores under `store/`.
 
 ### 5. Run the development server
 
@@ -191,22 +173,10 @@ npm run db:seed      # Seed database with sample data
 ```
 
 ## 🔐 Authentication
-
-The app supports multiple authentication methods:
-
-1. **Email/Password**: Traditional signup with email verification
-2. **Google OAuth**: Sign in with Google account
-3. **GitHub OAuth**: Sign in with GitHub account
+Authentication is simulated client-side with a lightweight store. Sign-in and sign-up update local state only.
 
 ## 💳 Payment Integration
-
-Stripe is integrated for secure payment processing:
-
-- Credit/Debit card payments
-- Payment intent creation
-- Webhook handling for payment events
-- Refund processing
-- Payment history tracking
+Not applicable in frontend-only mode.
 
 ## 📱 Responsive Design
 

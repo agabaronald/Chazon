@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useSession, signIn, signOut } from 'next-auth/react'
 import { Search, Menu, X, User, Bell, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,17 +15,18 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { useAuthStore } from '@/store/auth'
 
 export function Header() {
-  const { data: session, status } = useSession()
+  const { isAuthenticated, user, logout } = useAuthStore()
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      // Navigate to search results
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
     }
   }
 
@@ -72,9 +73,7 @@ export function Header() {
               Become a Steward
             </Link>
 
-            {status === 'loading' ? (
-              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
-            ) : session ? (
+            {isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 {/* Notifications */}
                 <Button variant="ghost" size="sm" className="relative">
@@ -97,9 +96,9 @@ export function Header() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={session.user?.image || ''} alt={session.user?.name || ''} />
+                        <AvatarImage src={user?.image || ''} alt={user?.name || ''} />
                         <AvatarFallback>
-                          {session.user?.name?.charAt(0) || <User className="w-4 h-4" />}
+                          {user?.name?.charAt(0) || <User className="w-4 h-4" />}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
@@ -107,12 +106,12 @@ export function Header() {
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex items-center justify-start gap-2 p-2">
                       <div className="flex flex-col space-y-1 leading-none">
-                        {session.user?.name && (
-                          <p className="font-medium">{session.user.name}</p>
+                        {user?.name && (
+                          <p className="font-medium">{user.name}</p>
                         )}
-                        {session.user?.email && (
+                        {user?.email && (
                           <p className="w-[200px] truncate text-sm text-muted-foreground">
-                            {session.user.email}
+                            {user.email}
                           </p>
                         )}
                       </div>
@@ -135,7 +134,7 @@ export function Header() {
                       className="cursor-pointer"
                       onSelect={(event) => {
                         event.preventDefault()
-                        signOut()
+                        logout()
                       }}
                     >
                       Sign out
@@ -145,10 +144,10 @@ export function Header() {
               </div>
             ) : (
               <div className="flex items-center space-x-3">
-                <Button variant="ghost" onClick={() => signIn()}>
+                <Button variant="ghost" onClick={() => router.push('/auth/signin')}>
                   Log in
                 </Button>
-                <Button onClick={() => window.location.href = '/auth/signup'} className="bg-chazon-primary hover:bg-chazon-primary-dark">
+                <Button onClick={() => router.push('/auth/signup')} className="bg-chazon-primary hover:bg-chazon-primary-dark">
                   Sign up
                 </Button>
               </div>
@@ -202,7 +201,7 @@ export function Header() {
             >
               Become a Steward
             </Link>
-            {session ? (
+            {isAuthenticated ? (
               <>
                 <Link
                   href="/dashboard"
@@ -220,7 +219,7 @@ export function Header() {
                 </Link>
                 <button
                   onClick={() => {
-                    signOut()
+                    logout()
                     setIsMenuOpen(false)
                   }}
                   className="block w-full text-left px-3 py-2 text-gray-700 hover:text-chazon-primary"
@@ -232,7 +231,7 @@ export function Header() {
               <>
                 <button
                   onClick={() => {
-                    signIn()
+                    router.push('/auth/signin')
                     setIsMenuOpen(false)
                   }}
                   className="block w-full text-left px-3 py-2 text-gray-700 hover:text-chazon-primary"
@@ -241,7 +240,7 @@ export function Header() {
                 </button>
                 <button
                   onClick={() => {
-                    window.location.href = '/auth/signup'
+                    router.push('/auth/signup')
                     setIsMenuOpen(false)
                   }}
                   className="block w-full text-left px-3 py-2 text-white bg-chazon-primary rounded-md"

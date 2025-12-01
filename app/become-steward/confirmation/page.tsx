@@ -1,49 +1,9 @@
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { Button } from '@/components/ui/button'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
-async function getUserStewardApplication() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session?.user?.email) {
-    return null
-  }
-
-  try {
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: {
-        stewardProfile: true,
-      },
-    })
-
-    return user?.stewardProfile || null
-  } catch (error) {
-    console.error('Failed to fetch steward application:', error)
-    return null
-  }
-}
-
-export default async function StewardApplicationConfirmationPage() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session) {
-    redirect('/auth/signin')
-  }
-
-  const stewardProfile = await getUserStewardApplication()
-
-  if (!stewardProfile) {
-    redirect('/become-steward')
-  }
-
-  // Application is always pending at this stage
-  const applicationStatus = 'PENDING'
+export default function StewardApplicationConfirmationPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">

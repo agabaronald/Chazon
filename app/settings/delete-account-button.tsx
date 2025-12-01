@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/store/auth'
 
 export function DeleteAccountButton() {
   const router = useRouter()
+  const { logout } = useAuthStore()
   const [isOpen, setIsOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState('')
@@ -24,23 +26,8 @@ export function DeleteAccountButton() {
     setError('')
 
     try {
-      const response = await fetch('/api/settings/delete-account', {
-        method: 'POST',
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        // Redirect to homepage or sign-in page
-        if (data.redirect) {
-          router.push(data.redirect)
-        } else {
-          router.push('/')
-        }
-      } else {
-        setError(data.message || 'Failed to delete account. Please try again.')
-        setIsDeleting(false)
-      }
+      logout()
+      router.push('/')
     } catch (err) {
       console.error(err)
       setError('An error occurred. Please try again.')

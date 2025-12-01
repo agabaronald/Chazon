@@ -1,66 +1,17 @@
+"use client"
+
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
-import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Calendar, Clock, MapPin, CheckCircle, XCircle, Clock3, User, Settings, BookOpen, Star } from 'lucide-react'
+import { useAuthStore } from '@/store/auth'
+import { useBookingsStore } from '@/store/bookings'
 
-async function getUserData() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session?.user?.email) {
-    return { user: null, bookings: [], isSteward: false }
-  }
-
-  try {
-    // Get user with steward profile
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: {
-        stewardProfile: true,
-      },
-    })
-
-    if (!user) {
-      return { user: null, bookings: [], isSteward: false }
-    }
-
-    // Get recent bookings
-    const recentBookings = await prisma.booking.findMany({
-      where: {
-        clientId: user.id,
-      },
-      include: {
-        service: {
-          include: {
-            category: true,
-            steward: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: 3,
-    })
-
-    return { 
-      user, 
-      bookings: recentBookings, 
-      isSteward: !!user.stewardProfile 
-    }
-  } catch (error) {
-    console.error('Failed to fetch user data:', error)
-    return { user: null, bookings: [], isSteward: false }
-  }
+function useUserData() {
+  const { isAuthenticated, user } = useAuthStore()
+  const { bookings } = useBookingsStore()
+  return { isAuthenticated, user, bookings: bookings.slice(0, 3), isSteward: !!user?.isSteward }
 }
 
 function getStatusBadge(status: string) {
@@ -97,16 +48,9 @@ function getStatusBadge(status: string) {
   }
 }
 
-export default async function DashboardPage() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session) {
-    redirect('/auth/signin')
-  }
-
-  const { user, bookings, isSteward } = await getUserData()
-
-  if (!user) {
+export default function DashboardPage() {
+  const { isAuthenticated, user, bookings, isSteward } = useUserData()
+  if (!isAuthenticated || !user) {
     redirect('/auth/signin')
   }
 
@@ -264,9 +208,11 @@ export default async function DashboardPage() {
                               <div className="flex items-center">
                                 <div className="flex-shrink-0 h-10 w-10 rounded-md bg-gray-200 overflow-hidden">
                                   {booking.service.images && booking.service.images.length > 0 ? (
-                                    <img
+                                    <Image
                                       src={booking.service.images[0]}
                                       alt={booking.service.title}
+                                      width={40}
+                                      height={40}
                                       className="h-full w-full object-cover"
                                     />
                                   ) : (
@@ -364,3 +310,4 @@ export default async function DashboardPage() {
     </div>
   )
 }
+import Image from 'next/image'

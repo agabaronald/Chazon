@@ -1,50 +1,26 @@
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { ServiceCard } from '@/components/ui/service-card'
-import { prisma } from '@/lib/prisma'
+import { services as allServices } from '@/data/services'
 
 async function searchServices(query: string) {
-  try {
-    // Search in title, description, and category name
-    const services = await prisma.service.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } },
-          { category: { name: { contains: query, mode: 'insensitive' } } },
-        ],
-      },
-      include: {
-        category: true,
-        steward: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-            rating: true,
-            totalReviews: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-    return services
-  } catch (error) {
-    console.error('Failed to search services:', error)
-    return []
-  }
+  const q = query.toLowerCase()
+  return allServices.filter(
+    (s) =>
+      s.title.toLowerCase().includes(q) ||
+      s.description.toLowerCase().includes(q) ||
+      s.category.name.toLowerCase().includes(q)
+  )
 }
 
 interface SearchPageProps {
-  params: Promise<{}>
+  params: Promise<Record<string, string>>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function SearchPage({ params, searchParams }: SearchPageProps) {
+export default async function SearchPage({ params: _params, searchParams }: SearchPageProps) {
   // We don't use params in this page, but it's required by Next.js 15
+  await _params
   const resolvedSearchParams = await searchParams;
   const query = Array.isArray(resolvedSearchParams.q) ? resolvedSearchParams.q[0] : resolvedSearchParams.q || ''
   const services = await searchServices(query)
@@ -68,7 +44,7 @@ export default async function SearchPage({ params, searchParams }: SearchPagePro
           {services.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service) => (
-                <ServiceCard key={service.id} service={service} />
+                <ServiceCard key={service.id} service={service} highlight={query} />
               ))}
             </div>
           ) : (

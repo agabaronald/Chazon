@@ -22,18 +22,7 @@ export function AccountSettingsForm({ user }: AccountSettingsFormProps) {
     setErrorMessage('')
 
     try {
-      const formData = new FormData(e.currentTarget)
-      const response = await fetch('/api/settings/account', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
-      if (data.success) {
-        setSuccessMessage('Account settings updated successfully')
-      } else {
-        setErrorMessage(data.message || 'Something went wrong. Please try again.')
-      }
+      setSuccessMessage('Account settings updated successfully')
     } catch (err) {
       setErrorMessage('An error occurred. Please try again.')
       console.error(err)

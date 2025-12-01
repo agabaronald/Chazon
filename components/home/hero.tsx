@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Search, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,17 +18,18 @@ const popularServices = [
 
 export function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
+  const router = useRouter()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
     }
   }
 
   const handlePopularServiceClick = (service: string) => {
-    window.location.href = `/search?q=${encodeURIComponent(service)}`
-  } // ✅ This closing brace was missing
+    router.push(`/search?q=${encodeURIComponent(service)}`)
+  }
 
   return (
     <section className="relative bg-gradient-to-br from-chazon-primary to-chazon-blue hero-pattern bg-blue-400">

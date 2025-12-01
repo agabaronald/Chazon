@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/prisma'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { notFound } from 'next/navigation'
@@ -6,40 +5,13 @@ import Image from 'next/image'
 import { ServiceImageGallery } from '@/components/ui/service-image-gallery'
 import { Badge } from '@/components/ui/badge'
 import { BookNowButton } from '@/components/ui/book-now-button'
+import { BookingSteps } from '@/components/ui/booking-steps'
 import { ReviewCard } from '@/components/ui/review-card'
-import type { Prisma } from '@prisma/client'
+import { services } from '@/data/services'
+import { stewards } from '@/data/users'
+import { ServiceCard } from '@/components/ui/service-card'
 
-// Define a precise, Prisma-generated type for the service details
-const serviceDetailInclude = {
-  category: { select: { name: true } },
-  steward: {
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      rating: true,
-      totalReviews: true,
-      bio: true,
-      reviewsReceived: {
-        include: {
-          reviewer: {
-            select: {
-              name: true,
-              image: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: 'desc' as const,
-        },
-      },
-    },
-  },
-}
-
-type ServiceDetails = Prisma.ServiceGetPayload<{
-  include: typeof serviceDetailInclude
-}>
+type ServiceDetails = typeof services[number]
 
 interface ServiceDetailPageProps {
   params: Promise<{ id: string }>
@@ -47,16 +19,8 @@ interface ServiceDetailPageProps {
 }
 
 async function getServiceDetails(id: string): Promise<ServiceDetails | null> {
-  try {
-    const service = await prisma.service.findUnique({
-      where: { id },
-      include: serviceDetailInclude,
-    })
-    return service
-  } catch (error) {
-    console.error('Failed to fetch service details:', error)
-    return null
-  }
+  const service = services.find(s => s.id === id) || null
+  return service
 }
 
 export default async function ServiceDetailPage({ params, searchParams }: ServiceDetailPageProps) {
@@ -91,7 +55,7 @@ export default async function ServiceDetailPage({ params, searchParams }: Servic
               <p className="text-2xl font-bold text-green-600 mb-6">
                 ${service.price.toFixed(2)}
               </p>
-              <BookNowButton serviceId={service.id} />
+              <BookingSteps serviceId={service.id} />
 
               {/* Steward Info */}
               <div className="bg-gray-50 p-6 rounded-2xl mt-6">
@@ -131,22 +95,32 @@ export default async function ServiceDetailPage({ params, searchParams }: Servic
             <p className="text-lg text-gray-700 whitespace-pre-wrap">
               {service.description}
             </p>
+            <div className="mt-6">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">What's included</h3>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-700">
+                <li className="flex items-center"><span className="text-green-600 mr-2">✔</span>Arrival within scheduled window</li>
+                <li className="flex items-center"><span className="text-green-600 mr-2">✔</span>All necessary tools</li>
+                <li className="flex items-center"><span className="text-green-600 mr-2">✔</span>Professional cleanup</li>
+                <li className="flex items-center"><span className="text-green-600 mr-2">✔</span>Quality check and walkthrough</li>
+              </ul>
+            </div>
           </div>
 
-          {/* Reviews Section */}
           <div className="mt-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              What people are saying
-            </h2>
-            {service.steward.reviewsReceived.length > 0 ? (
-              <div className="space-y-6">
-                {service.steward.reviewsReceived.map((review) => (
-                  <ReviewCard key={review.id} review={review} />
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">What people are saying</h2>
+            <p className="text-lg text-gray-500">No reviews yet.</p>
+          </div>
+
+          <div className="mt-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Related services</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {services
+                .filter((s) => s.category.id === service.category.id && s.id !== service.id)
+                .slice(0, 3)
+                .map((s) => (
+                  <ServiceCard key={s.id} service={s} />
                 ))}
-              </div>
-            ) : (
-              <p className="text-lg text-gray-500">No reviews yet.</p>
-            )}
+            </div>
           </div>
         </div>
       </main>

@@ -4,13 +4,31 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import type { ServiceCardType } from '@/app/services/page'
+import type { Service as ServiceCardType } from '@/types/service'
 
 interface ServiceCardProps {
   service: ServiceCardType
+  highlight?: string
 }
 
-export function ServiceCard({ service }: ServiceCardProps) {
+function Highlight({ text, query }: { text: string; query?: string }) {
+  if (!query || !text.toLowerCase().includes(query.toLowerCase())) return <>{text}</>
+  const q = query.toLowerCase()
+  const parts = text.split(new RegExp(`(${query})`, 'ig'))
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === q ? (
+          <span key={i} className="bg-yellow-200">{part}</span>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  )
+}
+
+export function ServiceCard({ service, highlight }: ServiceCardProps) {
   const { steward } = service
 
   return (
@@ -31,7 +49,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
             {service.category.name}
           </Badge>
           <CardTitle className="text-xl font-bold text-gray-900 leading-tight mb-4">
-            {service.title}
+            <Highlight text={service.title} query={highlight} />
           </CardTitle>
         </CardContent>
         <CardFooter className="p-6 bg-gray-50/50 flex items-center justify-between">

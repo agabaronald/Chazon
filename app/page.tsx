@@ -7,20 +7,19 @@ import { FeaturedStewards } from '@/components/home/featured-stewards'
 import { Testimonials } from '@/components/home/testimonials'
 import { Footer } from '@/components/layout/footer'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { prisma } from '@/lib/prisma'
+import { categories as mockCategories } from '@/data/categories'
+import { services } from '@/data/services'
+import type { CategoryWithCount } from '@/components/home/categories'
 
 export default async function HomePage() {
-  // Fetch categories directly from the database
-  const categories = await prisma.category.findMany({
-    include: {
-      _count: {
-        select: { services: true },
-      },
-    },
-    orderBy: {
-      name: 'asc',
-    },
-  })
+  const categories: CategoryWithCount[] = mockCategories.map((c) => ({
+    id: c.id,
+    name: c.name,
+    description: c.description ?? null,
+    slug: c.slug,
+    icon: null,
+    _count: { services: services.filter((s) => s.category.id === c.id).length },
+  }))
 
   return (
     <div className="min-h-screen bg-white">

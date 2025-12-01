@@ -4,21 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "prisma generate",
-    "db:push": "prisma db push",
-    "db:migrate": "npx prisma migrate dev",
-    "db:validate": "npx prisma validate",
-    "db:generate": "prisma generate",
-    "db:studio": "prisma studio",
-    "db:seed": "tsx prisma/seed.ts"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.9.1",
+    
     "@hookform/resolvers": "^3.3.4",
-    "@prisma/client": "6.10.1",
+    
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
@@ -31,24 +24,22 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
-    "@stripe/react-stripe-js": "^2.4.0",
-    "@stripe/stripe-js": "^2.2.2",
+    
     "@tailwindcss/forms": "^0.5.7",
     "@tanstack/react-query": "^5.20.5",
-    "bcryptjs": "^2.4.3",
+    
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.0.6",
     "framer-motion": "^11.0.5",
     "lucide-react": "^0.323.0",
     "next": "^15.3.3",
-    "next-auth": "^4.24.6",
-    "next-cloudinary": "^6.0.0",
+    
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.49.3",
     "react-hot-toast": "^2.4.1",
-    "stripe": "^14.17.0",
+    
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.3.3",
@@ -56,7 +47,7 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
+    
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -65,7 +56,7 @@
     "eslint-config-next": "^15.3.3",
     "postcss": "^8.4.32",
     "prettier": "^3.2.5",
-    "prisma": "6.10.1",
+    
     "tailwindcss": "^3.3.6",
     "tsx": "^4.7.1"
   },

@@ -1,19 +1,16 @@
+"use client";
+
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import { StewardApplicationForm } from './steward-application-form';
+import { useAuthStore } from '@/store/auth';
 
-export default async function BecomeStewardPage() {
-  const session = await getServerSession(authOptions);
-
-  // If user is already logged in, redirect them to the application form section
-  // Otherwise, they'll see the marketing content first
-  const isLoggedIn = !!session;
+export default function BecomeStewardPage() {
+  const { isAuthenticated } = useAuthStore();
+  const isLoggedIn = isAuthenticated;
 
   return (
     <div className="min-h-screen bg-white">

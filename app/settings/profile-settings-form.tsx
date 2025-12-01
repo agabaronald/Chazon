@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { User } from 'lucide-react'
+import { useAuthStore } from '@/store/auth'
 
 type User = {
   id: string
@@ -23,6 +24,7 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const { updateUser } = useAuthStore()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -32,17 +34,11 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
 
     try {
       const formData = new FormData(e.currentTarget)
-      const response = await fetch('/api/settings/profile', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
-      if (data.success) {
-        setSuccessMessage('Profile updated successfully')
-      } else {
-        setErrorMessage(data.message || 'Something went wrong. Please try again.')
-      }
+      const name = formData.get('name') as string
+      const phone = formData.get('phone') as string
+      const address = formData.get('address') as string
+      updateUser({ name, phone, location: address })
+      setSuccessMessage('Profile updated successfully')
     } catch (err) {
       setErrorMessage('An error occurred. Please try again.')
       console.error(err)

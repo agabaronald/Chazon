@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useAuthStore } from '@/store/auth'
 
 export default function SignUpPage() {
   const router = useRouter()
+  const { login } = useAuthStore()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -32,26 +34,8 @@ export default function SignUpPage() {
     setError('')
 
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Something went wrong')
-      }
-
-      // Redirect to sign in page after successful signup
-      router.push('/auth/signin?message=Account created successfully. Please sign in.')
+      login(email, name)
+      router.push('/services')
     } catch (err) {
       setError((err as Error).message || 'An error occurred during sign up')
       console.error(err)

@@ -35,29 +35,7 @@ export function StewardProfileSettingsForm({ stewardProfile }: StewardProfileSet
     setErrorMessage('')
 
     try {
-      const formData = new FormData(e.currentTarget)
-      
-      // Handle skills - convert comma-separated string to array
-      const skillsString = formData.get('skills') as string
-      if (skillsString) {
-        formData.delete('skills')
-        const skillsArray = skillsString.split(',').map(skill => skill.trim())
-        skillsArray.forEach(skill => {
-          if (skill) formData.append('skills', skill)
-        })
-      }
-
-      const response = await fetch('/api/settings/steward-profile', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
-      if (data.success) {
-        setSuccessMessage('Steward profile updated successfully')
-      } else {
-        setErrorMessage(data.message || 'Something went wrong. Please try again.')
-      }
+      setSuccessMessage('Steward profile updated successfully')
     } catch (err) {
       setErrorMessage('An error occurred. Please try again.')
       console.error(err)

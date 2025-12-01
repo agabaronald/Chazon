@@ -1,59 +1,25 @@
+"use client"
+
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
-import { prisma } from '@/lib/prisma'
-import { notFound } from 'next/navigation'
+import { notFound, useParams } from 'next/navigation'
 import { CheckCircle, Calendar, MapPin, Clock, FileText } from 'lucide-react'
 import Link from 'next/link'
+import { useBookingsStore } from '@/store/bookings'
 
-interface BookingConfirmationPageProps {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+function useBookingDetails(id: string) {
+  const { bookings } = useBookingsStore()
+  return bookings.find(b => b.id === id) || null
 }
 
-async function getBookingDetails(id: string) {
-  try {
-    const booking = await prisma.booking.findUnique({
-      where: { id },
-      include: {
-        service: {
-          include: {
-            category: true,
-            steward: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-                rating: true,
-                totalReviews: true,
-              },
-            },
-          },
-        },
-        client: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-    })
-    return booking
-  } catch (error) {
-    console.error('Failed to fetch booking details:', error)
-    return null
-  }
-}
-
-export default async function BookingConfirmationPage({ params, searchParams }: BookingConfirmationPageProps) {
-  const { id } = await params
-  const booking = await getBookingDetails(id)
+export default function BookingConfirmationPage() {
+  const { id } = useParams() as { id: string }
+  const booking = useBookingDetails(id)
 
   if (!booking) {
     notFound()
   }
 
-  // Format date for display
   const formattedDate = new Date(booking.scheduledDate).toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -118,9 +84,11 @@ export default async function BookingConfirmationPage({ params, searchParams }: 
                 <div className="flex items-start space-x-4">
                   <div className="h-16 w-16 rounded-md bg-gray-200 flex-shrink-0 overflow-hidden">
                     {booking.service.images && booking.service.images.length > 0 ? (
-                      <img
+                      <Image
                         src={booking.service.images[0]}
                         alt={booking.service.title}
+                        width={64}
+                        height={64}
                         className="h-full w-full object-cover"
                       />
                     ) : (
@@ -145,9 +113,11 @@ export default async function BookingConfirmationPage({ params, searchParams }: 
                 <div className="flex items-center space-x-4">
                   <div className="h-12 w-12 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
                     {booking.service.steward.image ? (
-                      <img
+                      <Image
                         src={booking.service.steward.image}
                         alt={booking.service.steward.name || 'Steward'}
+                        width={48}
+                        height={48}
                         className="h-full w-full object-cover"
                       />
                     ) : (
@@ -200,3 +170,4 @@ export default async function BookingConfirmationPage({ params, searchParams }: 
     </div>
   )
 }
+import Image from 'next/image'

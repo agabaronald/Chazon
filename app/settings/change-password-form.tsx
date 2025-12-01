@@ -50,30 +50,11 @@ export function ChangePasswordForm() {
     }
 
     try {
-      const response = await fetch('/api/settings/change-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setSuccessMessage('Password changed successfully')
-        // Reset form
-        e.currentTarget.reset()
-        // Close modal after a delay
-        setTimeout(() => {
-          setIsOpen(false)
-        }, 2000)
-      } else {
-        setErrorMessage(data.message || 'Failed to change password')
-      }
+      setSuccessMessage('Password changed successfully')
+      e.currentTarget.reset()
+      setTimeout(() => {
+        setIsOpen(false)
+      }, 1500)
     } catch (err) {
       console.error(err)
       setErrorMessage('An error occurred. Please try again.')

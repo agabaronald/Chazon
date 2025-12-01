@@ -1,49 +1,15 @@
+"use client"
+
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
-import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Calendar, Clock, MapPin, CheckCircle, XCircle, Clock3 } from 'lucide-react'
+import { useBookingsStore } from '@/store/bookings'
+import { useAuthStore } from '@/store/auth'
 
-async function getUserBookings() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session?.user?.email) {
-    return []
-  }
-
-  try {
-    const bookings = await prisma.booking.findMany({
-      where: {
-        client: {
-          email: session.user.email,
-        },
-      },
-      include: {
-        service: {
-          include: {
-            category: true,
-            steward: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-    return bookings
-  } catch (error) {
-    console.error('Failed to fetch user bookings:', error)
-    return []
-  }
+function useUserBookings() {
+  const { bookings } = useBookingsStore()
+  return bookings
 }
 
 function getStatusBadge(status: string) {
@@ -80,14 +46,9 @@ function getStatusBadge(status: string) {
   }
 }
 
-export default async function BookingsPage() {
-  const session = await getServerSession(authOptions)
-  
-  if (!session) {
-    redirect('/auth/signin')
-  }
-
-  const bookings = await getUserBookings()
+export default function BookingsPage() {
+  const { isAuthenticated } = useAuthStore()
+  const bookings = useUserBookings()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -101,7 +62,7 @@ export default async function BookingsPage() {
             </p>
           </div>
 
-          {bookings.length > 0 ? (
+          {isAuthenticated && bookings.length > 0 ? (
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
               <ul className="divide-y divide-gray-200">
                 {bookings.map((booking) => {
@@ -122,9 +83,11 @@ export default async function BookingsPage() {
                               <div className="flex items-center">
                                 <div className="flex-shrink-0 h-10 w-10 rounded-md bg-gray-200 overflow-hidden">
                                   {booking.service.images && booking.service.images.length > 0 ? (
-                                    <img
+                                    <Image
                                       src={booking.service.images[0]}
                                       alt={booking.service.title}
+                                      width={40}
+                                      height={40}
                                       className="h-full w-full object-cover"
                                     />
                                   ) : (
@@ -166,9 +129,11 @@ export default async function BookingsPage() {
                               <div className="flex-shrink-0">
                                 <div className="h-8 w-8 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
                                   {booking.service.steward.image ? (
-                                    <img
+                                    <Image
                                       src={booking.service.steward.image}
                                       alt={booking.service.steward.name || 'Steward'}
+                                      width={32}
+                                      height={32}
                                       className="h-full w-full object-cover"
                                     />
                                   ) : (
@@ -217,3 +182,4 @@ export default async function BookingsPage() {
     </div>
   )
 }
+import Image from 'next/image'

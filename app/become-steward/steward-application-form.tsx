@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
 export function StewardApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -13,18 +15,7 @@ export function StewardApplicationForm() {
     setError('')
 
     try {
-      const formData = new FormData(e.currentTarget)
-      const response = await fetch('/api/steward-application', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
-      if (data.success && data.redirect) {
-        window.location.href = data.redirect
-      } else {
-        setError(data.message || 'Something went wrong. Please try again.')
-      }
+      router.push('/become-steward/confirmation')
     } catch (err) {
       setError('An error occurred. Please try again.')
       console.error(err)

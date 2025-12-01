@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useAuthStore } from '@/store/auth'
 
 export default function SignInPage() {
   const router = useRouter()
+  const { login } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -19,17 +20,8 @@ export default function SignInPage() {
     setError('')
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        setError('Invalid email or password')
-      } else {
-        router.push('/dashboard')
-      }
+      login(email)
+      router.push('/services')
     } catch (err) {
       setError('An error occurred during sign in')
       console.error(err)
@@ -38,15 +30,8 @@ export default function SignInPage() {
     }
   }
 
-  const handleOAuthSignIn = async (provider: string) => {
-    setIsLoading(true)
-    try {
-      await signIn(provider, { callbackUrl: '/dashboard' })
-    } catch (err) {
-      setError('An error occurred during sign in')
-      setIsLoading(false)
-      console.error(err)
-    }
+  const handleOAuthSignIn = async (_provider: string) => {
+    setError('Social sign-in is not available')
   }
 
   return (
