@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
-import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
   /* Backend function commented out to keep only frontend working
