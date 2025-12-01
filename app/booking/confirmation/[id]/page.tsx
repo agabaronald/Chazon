@@ -2,7 +2,6 @@
 
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
-import Image from 'next/image'
 import { notFound, useParams } from 'next/navigation'
 import { CheckCircle, Calendar, MapPin, Clock, FileText } from 'lucide-react'
 import { ImageWithFallback } from '@/components/ui/image-with-fallback'
