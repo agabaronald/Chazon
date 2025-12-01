@@ -9,7 +9,7 @@ export const services: Service[] = [
     description: 'Professional assembly of IKEA and other flat-pack furniture. Fast and reliable service.',
     price: 75,
     duration: 90,
-    images: ['https://images.unsplash.com/photo-1519710164239-dad2f4d4f1ac?w=1200&q=80&auto=format&fit=crop'],
+    images: ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=80&auto=format&fit=crop'],
     category: categories.find(c => c.slug === 'furniture-assembly')!,
     steward: {
       id: stewards[0].id,
@@ -26,7 +26,7 @@ export const services: Service[] = [
     description: 'Thorough cleaning of kitchens, bathrooms, and living spaces. Eco-friendly options available.',
     price: 120,
     duration: 180,
-    images: ['https://images.unsplash.com/photo-1581579181769-8b6c1f43aab1?w=1200&q=80&auto=format&fit=crop'],
+    images: ['https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=1200&q=80&auto=format&fit=crop'],
     category: categories.find(c => c.slug === 'cleaning')!,
     steward: {
       id: stewards[1].id,
@@ -38,4 +38,3 @@ export const services: Service[] = [
     },
   },
 ]
-

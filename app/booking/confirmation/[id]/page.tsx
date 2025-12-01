@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { notFound, useParams } from 'next/navigation'
 import { CheckCircle, Calendar, MapPin, Clock, FileText } from 'lucide-react'
+import { ImageWithFallback } from '@/components/ui/image-with-fallback'
 import Link from 'next/link'
 import { useBookingsStore } from '@/store/bookings'
 
@@ -84,7 +85,7 @@ export default function BookingConfirmationPage() {
                 <div className="flex items-start space-x-4">
                   <div className="h-16 w-16 rounded-md bg-gray-200 flex-shrink-0 overflow-hidden">
                     {booking.service.images && booking.service.images.length > 0 ? (
-                      <Image
+                      <ImageWithFallback
                         src={booking.service.images[0]}
                         alt={booking.service.title}
                         width={64}
@@ -113,7 +114,7 @@ export default function BookingConfirmationPage() {
                 <div className="flex items-center space-x-4">
                   <div className="h-12 w-12 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
                     {booking.service.steward.image ? (
-                      <Image
+                      <ImageWithFallback
                         src={booking.service.steward.image}
                         alt={booking.service.steward.name || 'Steward'}
                         width={48}

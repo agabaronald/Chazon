@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { ImageWithFallback } from '@/components/ui/image-with-fallback'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,7 +37,7 @@ export function ServiceCard({ service, highlight }: ServiceCardProps) {
       <Card className="h-full flex flex-col overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out">
         <CardHeader className="p-0">
           <div className="aspect-w-16 aspect-h-9 relative overflow-hidden">
-            <Image
+            <ImageWithFallback
               src={service.images[0] || '/placeholder-image.jpg'}
               alt={service.title}
               fill
@@ -54,7 +55,7 @@ export function ServiceCard({ service, highlight }: ServiceCardProps) {
         </CardContent>
         <CardFooter className="p-6 bg-gray-50/50 flex items-center justify-between">
           <div className="flex items-center">
-            <Image
+            <ImageWithFallback
               src={steward.image || '/default-avatar.png'}
               alt={steward.name || 'Steward'}
               width={40}

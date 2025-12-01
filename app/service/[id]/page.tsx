@@ -1,7 +1,7 @@
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
+import { ImageWithFallback } from '@/components/ui/image-with-fallback'
 import { ServiceImageGallery } from '@/components/ui/service-image-gallery'
 import { Badge } from '@/components/ui/badge'
 import { BookNowButton } from '@/components/ui/book-now-button'
@@ -60,7 +60,7 @@ export default async function ServiceDetailPage({ params, searchParams }: Servic
               {/* Steward Info */}
               <div className="bg-gray-50 p-6 rounded-2xl mt-6">
                 <div className="flex items-center mb-4">
-                  <Image
+                  <ImageWithFallback
                     src={service.steward.image || '/default-avatar.png'}
                     alt={service.steward.name || 'Steward'}
                     width={64}

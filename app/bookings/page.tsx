@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import Link from 'next/link'
 import { Calendar, Clock, MapPin, CheckCircle, XCircle, Clock3 } from 'lucide-react'
+import { ImageWithFallback } from '@/components/ui/image-with-fallback'
 import { useBookingsStore } from '@/store/bookings'
 import { useAuthStore } from '@/store/auth'
 
@@ -83,7 +84,7 @@ export default function BookingsPage() {
                               <div className="flex items-center">
                                 <div className="flex-shrink-0 h-10 w-10 rounded-md bg-gray-200 overflow-hidden">
                                   {booking.service.images && booking.service.images.length > 0 ? (
-                                    <Image
+                                    <ImageWithFallback
                                       src={booking.service.images[0]}
                                       alt={booking.service.title}
                                       width={40}
@@ -129,7 +130,7 @@ export default function BookingsPage() {
                               <div className="flex-shrink-0">
                                 <div className="h-8 w-8 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
                                   {booking.service.steward.image ? (
-                                    <Image
+                                    <ImageWithFallback
                                       src={booking.service.steward.image}
                                       alt={booking.service.steward.name || 'Steward'}
                                       width={32}

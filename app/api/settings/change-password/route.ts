@@ -1,8 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import bcrypt from 'bcryptjs'
 
 export async function POST(req: NextRequest) {
   /* Backend function commented out to keep only frontend working
