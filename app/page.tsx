@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { Header } from '@/components/layout/header'
 import { Hero } from '@/components/home/hero'
 import { Categories } from '@/components/home/categories'
+import { FeaturedServices } from '@/components/home/featured-services'
 import { HowItWorks } from '@/components/home/how-it-works'
 import { FeaturedStewards } from '@/components/home/featured-stewards'
 import { Testimonials } from '@/components/home/testimonials'
@@ -27,6 +28,7 @@ export default async function HomePage() {
       <main>
         <Hero />
         <Categories categories={categories} />
+        <FeaturedServices />
         <HowItWorks />
         <Suspense fallback={<LoadingSpinner />}>
           <FeaturedStewards />

@@ -61,7 +61,7 @@ export default async function ServiceDetailPage({ params, searchParams }: Servic
               <div className="bg-gray-50 p-6 rounded-2xl mt-6">
                 <div className="flex items-center mb-4">
                   <ImageWithFallback
-                    src={service.steward.image || '/default-avatar.png'}
+                    src={service.steward.image || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=100&h=100&fit=crop&q=60'}
                     alt={service.steward.name || 'Steward'}
                     width={64}
                     height={64}

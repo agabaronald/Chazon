@@ -8,7 +8,7 @@ type Props = Omit<ImageProps, 'src'> & {
   fallbackSrc?: string
 }
 
-export function ImageWithFallback({ src, fallbackSrc = '/default-avatar.png', alt, ...rest }: Props) {
+export function ImageWithFallback({ src, fallbackSrc = 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=100&h=100&fit=crop&q=60', alt, ...rest }: Props) {
   const [currentSrc, setCurrentSrc] = useState(src)
 
   return (

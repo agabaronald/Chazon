@@ -56,7 +56,7 @@ export function ServiceCard({ service, highlight }: ServiceCardProps) {
         <CardFooter className="p-6 bg-gray-50/50 flex items-center justify-between">
           <div className="flex items-center">
             <ImageWithFallback
-              src={steward.image || '/default-avatar.png'}
+              src={steward.image || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=100&h=100&fit=crop&q=60'}
               alt={steward.name || 'Steward'}
               width={40}
               height={40}
