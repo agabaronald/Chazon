@@ -24,7 +24,7 @@ const featuredStewards = [
   },
   {
     id: '2',
-    name: 'Kato Okello',
+    name: 'Mark Okello',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
     rating: 4.8,
     reviewCount: 89,

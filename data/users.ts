@@ -99,4 +99,18 @@ export const stewards: User[] = [
     image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
     createdAt: new Date().toISOString(),
   },
+  {
+    id: 'stew-7',
+    name: 'Anthony Mbabazi',
+    email: 'anthony.mbabazi@example.com',
+    phone: '+256-773-123456',
+    bio: 'Experienced handyman specializing in landscaping expert. I love making yards beautiful.',
+    location: 'Munyonyo, Kampala',
+    isSteward: true,
+    isVerified: true,
+    rating: 4.9,
+    totalReviews: 98,
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    createdAt: new Date().toISOString(),
+  },
 ]
