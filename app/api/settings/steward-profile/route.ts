@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
       skills: ['Cleaning', 'Gardening'],
       experience: 'Mock experience',
       availability: 'Weekdays',
-      hourlyRate: 25
+      hourlyRate: 100000
     },
     redirect: '/settings'
   })

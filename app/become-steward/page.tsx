@@ -104,7 +104,7 @@ export default function BecomeStewardPage() {
                         <DollarSign className="w-6 h-6 text-green-600" />
                       </div>
                       <div>
-                        <p className="text-white font-bold text-lg">Earn $35+/hr</p>
+                        <p className="text-white font-bold text-lg">Earn 130,000+ UGX/hr</p>
                         <p className="text-white/80 text-sm">Average for top Stewards</p>
                       </div>
                     </div>

@@ -89,7 +89,7 @@ export default function SignUpPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
-                  placeholder="John Doe"
+                  placeholder="John Mugisha"
                 />
               </div>
 
@@ -104,7 +104,7 @@ export default function SignUpPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
-                  placeholder="john@example.com"
+                  placeholder="john.mugisha@example.com"
                 />
               </div>
 

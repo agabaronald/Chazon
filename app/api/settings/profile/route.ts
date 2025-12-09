@@ -6,10 +6,10 @@ export async function POST(req: NextRequest) {
     message: 'Profile updated successfully',
     user: {
       id: 'mock-id',
-      name: 'Mock User',
+      name: 'John Mugisha',
       email: 'mock@example.com',
-      phone: '123-456-7890',
-      address: 'Mock Address',
+      phone: '+256-772-123456',
+      address: 'Ntinda, Kampala',
     },
     redirect: '/settings'
   })

@@ -53,7 +53,7 @@ export default async function ServiceDetailPage({ params, searchParams }: Servic
                 {service.title}
               </h1>
               <p className="text-2xl font-bold text-green-600 mb-6">
-                ${service.price.toFixed(2)}
+                UGX {service.price.toLocaleString()}
               </p>
               <BookingSteps serviceId={service.id} />
 

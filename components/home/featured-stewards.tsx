@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button'
 const featuredStewards = [
   {
     id: '1',
-    name: 'Sarah Johnson',
+    name: 'Sarah Namutebi',
     image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
     rating: 4.9,
     reviewCount: 127,
-    hourlyRate: 45,
-    location: 'Downtown, Seattle',
+    hourlyRate: 165000,
+    location: 'Nakasero, Kampala',
     skills: ['Furniture Assembly', 'TV Mounting', 'Handyman'],
     completedTasks: 234,
     responseTime: '1 hour',
@@ -24,12 +24,12 @@ const featuredStewards = [
   },
   {
     id: '2',
-    name: 'Michael Chen',
+    name: 'Kato Okello',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
     rating: 4.8,
     reviewCount: 89,
-    hourlyRate: 55,
-    location: 'Capitol Hill, Seattle',
+    hourlyRate: 205000,
+    location: 'Kololo, Kampala',
     skills: ['Moving', 'Delivery', 'Heavy Lifting'],
     completedTasks: 156,
     responseTime: '30 mins',
@@ -38,12 +38,12 @@ const featuredStewards = [
   },
   {
     id: '3',
-    name: 'Emily Rodriguez',
+    name: 'Mary Nalubega',
     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
     rating: 5.0,
     reviewCount: 203,
-    hourlyRate: 40,
-    location: 'Ballard, Seattle',
+    hourlyRate: 150000,
+    location: 'Bugolobi, Kampala',
     skills: ['Cleaning', 'Organization', 'Deep Cleaning'],
     completedTasks: 312,
     responseTime: '2 hours',
@@ -52,12 +52,12 @@ const featuredStewards = [
   },
   {
     id: '4',
-    name: 'David Thompson',
+    name: 'David Omondi',
     image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
     rating: 4.7,
     reviewCount: 145,
-    hourlyRate: 65,
-    location: 'Fremont, Seattle',
+    hourlyRate: 240000,
+    location: 'Ntinda, Kampala',
     skills: ['Electrical', 'Plumbing', 'Home Repair'],
     completedTasks: 189,
     responseTime: '45 mins',
@@ -148,7 +148,7 @@ export function FeaturedStewards() {
                 <div className="border-t pt-4">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <span className="text-2xl font-bold text-gray-900">${steward.hourlyRate}</span>
+                      <span className="text-2xl font-bold text-gray-900">UGX {steward.hourlyRate.toLocaleString()}</span>
                       <span className="text-gray-500">/hr</span>
                     </div>
                   </div>

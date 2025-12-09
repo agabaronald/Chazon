@@ -5,9 +5,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 type Chip = { label: string; set: (params: URLSearchParams) => void }
 
 const priceChips: Chip[] = [
-  { label: 'Under $50', set: (p) => p.set('price', '50') },
-  { label: 'Under $100', set: (p) => p.set('price', '100') },
-  { label: 'Under $200', set: (p) => p.set('price', '200') },
+  { label: 'Under 200k UGX', set: (p) => p.set('price', '200000') },
+  { label: 'Under 400k UGX', set: (p) => p.set('price', '400000') },
+  { label: 'Under 800k UGX', set: (p) => p.set('price', '800000') },
 ]
 
 export function FilterChips() {

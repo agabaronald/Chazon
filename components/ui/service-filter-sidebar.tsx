@@ -67,8 +67,8 @@ export function ServiceFilterSidebar({ categories }: ServiceFilterSidebarProps) 
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
         />
         <div className="flex justify-between text-sm text-gray-500 mt-2">
-          <span>$0</span>
-          <span>${searchParams.get('price') || '500'}</span>
+          <span>0 UGX</span>
+          <span>{Number(searchParams.get('price') || '1850000').toLocaleString()} UGX</span>
         </div>
       </div>
 
