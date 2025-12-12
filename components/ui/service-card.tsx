@@ -75,7 +75,7 @@ export function ServiceCard({ service, highlight }: ServiceCardProps) {
           </div>
           <div className="text-right">
             <p className="text-xl font-bold text-green-600">
-              UGX {service.price.toLocaleString()}
+              {service.currency || 'UGX'} {service.price.toLocaleString()}
             </p>
           </div>
         </CardFooter>

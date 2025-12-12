@@ -19,6 +19,7 @@ export type Service = {
   title: string
   description: string
   price: number
+  currency?: string
   duration: number
   images: string[]
   category: Category

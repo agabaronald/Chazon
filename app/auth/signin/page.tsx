@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/store/auth'
+import { ApiClient } from '@/lib/api-client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -24,12 +26,22 @@ export default function SignInPage() {
     setError('')
 
     try {
-      login(email)
-      // Simulate network delay for effect
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      router.push('/services')
+      // Using NextAuth signIn
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      })
+
+      if (result?.error) {
+        throw new Error('Invalid email or password')
+      }
+
+      router.refresh() // Refresh to update session state
+      // Force a hard reload to ensure session state is completely synchronized
+      window.location.href = '/services'
     } catch (err) {
-      setError('Invalid email or password')
+      setError((err as Error).message || 'Invalid email or password')
     } finally {
       setIsLoading(false)
     }

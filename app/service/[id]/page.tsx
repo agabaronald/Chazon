@@ -4,30 +4,36 @@ import { notFound } from 'next/navigation'
 import { ImageWithFallback } from '@/components/ui/image-with-fallback'
 import { ServiceImageGallery } from '@/components/ui/service-image-gallery'
 import { Badge } from '@/components/ui/badge'
-import { BookNowButton } from '@/components/ui/book-now-button'
 import { BookingSteps } from '@/components/ui/booking-steps'
-import { ReviewCard } from '@/components/ui/review-card'
-import { services } from '@/data/services'
-import { stewards } from '@/data/users'
+import { ApiClient } from '@/lib/api-client'
 import { ServiceCard } from '@/components/ui/service-card'
-
-type ServiceDetails = typeof services[number]
+import { Service } from '@/types/service'
 
 interface ServiceDetailPageProps {
   params: Promise<{ id: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-async function getServiceDetails(id: string): Promise<ServiceDetails | null> {
-  const service = services.find(s => s.id === id) || null
-  return service
-}
-
 export default async function ServiceDetailPage({ params, searchParams }: ServiceDetailPageProps) {
   const { id } = await params
   // We don't use searchParams in this page, but it's required by Next.js 15
   await searchParams
-  const service = await getServiceDetails(id)
+  
+  let service: Service | null = null
+  let relatedServices: Service[] = []
+
+  try {
+    service = await ApiClient.services.get(id)
+    
+    if (service) {
+      // Fetch related services
+      const relatedResponse = await ApiClient.services.list(new URLSearchParams({ category: service.category.slug }))
+      relatedServices = relatedResponse.data.filter(s => s.id !== service!.id).slice(0, 3)
+    }
+  } catch (error) {
+    console.error('Failed to fetch service details:', error)
+    notFound()
+  }
 
   if (!service) {
     notFound()
@@ -114,12 +120,9 @@ export default async function ServiceDetailPage({ params, searchParams }: Servic
           <div className="mt-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Related services</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services
-                .filter((s) => s.category.id === service.category.id && s.id !== service.id)
-                .slice(0, 3)
-                .map((s) => (
-                  <ServiceCard key={s.id} service={s} />
-                ))}
+              {relatedServices.map((s) => (
+                <ServiceCard key={s.id} service={s} />
+              ))}
             </div>
           </div>
         </div>

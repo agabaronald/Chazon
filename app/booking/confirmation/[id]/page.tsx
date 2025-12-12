@@ -1,24 +1,66 @@
 "use client"
 
+import { useState, useEffect } from 'react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { notFound, useParams } from 'next/navigation'
 import { CheckCircle, Calendar, MapPin, Clock, FileText } from 'lucide-react'
 import { ImageWithFallback } from '@/components/ui/image-with-fallback'
 import Link from 'next/link'
-import { useBookingsStore } from '@/store/bookings'
-
-function useBookingDetails(id: string) {
-  const { bookings } = useBookingsStore()
-  return bookings.find(b => b.id === id) || null
-}
+import { ApiClient } from '@/lib/api-client'
+import { Booking } from '@/types/booking'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 export default function BookingConfirmationPage() {
   const { id } = useParams() as { id: string }
-  const booking = useBookingDetails(id)
+  const [booking, setBooking] = useState<Booking | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  if (!booking) {
-    notFound()
+  useEffect(() => {
+    async function fetchBooking() {
+      try {
+        const data = await ApiClient.bookings.get(id)
+        setBooking(data)
+      } catch (err) {
+        console.error('Failed to fetch booking:', err)
+        setError('Failed to load booking details')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (id) {
+      fetchBooking()
+    }
+  }, [id])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <LoadingSpinner />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error || !booking) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+             <h1 className="text-2xl font-bold text-gray-900 mb-2">Booking Not Found</h1>
+             <p className="text-gray-600 mb-6">The booking you are looking for does not exist or could not be loaded.</p>
+             <Link href="/bookings" className="text-chazon-primary hover:underline">Return to My Bookings</Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   const formattedDate = new Date(booking.scheduledDate).toLocaleDateString('en-US', {

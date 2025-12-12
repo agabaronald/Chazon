@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/store/auth'
+import { ApiClient } from '@/lib/api-client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -37,10 +39,23 @@ export default function SignUpPage() {
     setError('')
 
     try {
-      login(email, name)
-      // Simulate network delay for effect
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      router.push('/services')
+      // 1. Create account
+      await ApiClient.auth.signup({ name, email, password })
+      
+      // 2. Auto sign in
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      })
+
+      if (result?.error) {
+        throw new Error('Account created but failed to sign in automatically')
+      }
+
+      router.refresh()
+      // Force a hard reload to ensure session state is completely synchronized
+      window.location.href = '/services'
     } catch (err) {
       setError((err as Error).message || 'An error occurred during sign up')
     } finally {

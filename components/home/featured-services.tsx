@@ -4,11 +4,15 @@ import { useState } from 'react'
 import { ServiceCard } from '@/components/ui/service-card'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
-import { services } from '@/data/services'
-import { categories } from '@/data/categories'
 import Link from 'next/link'
+import { Service, Category } from '@/types/service'
 
-export function FeaturedServices() {
+interface FeaturedServicesProps {
+  services: Service[]
+  categories: Category[]
+}
+
+export function FeaturedServices({ services, categories }: FeaturedServicesProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   const filteredServices = selectedCategory === 'all' 

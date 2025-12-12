@@ -2,32 +2,32 @@ import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { ServiceCard } from '@/components/ui/service-card'
 import { ServiceFilterSidebar } from '@/components/ui/service-filter-sidebar'
-import { services as allServices } from '@/data/services'
-import { categories as allCategories } from '@/data/categories'
 import { Pagination } from '@/components/ui/pagination'
 import { FilterChips } from '@/components/ui/filter-chips'
+import { ApiClient } from '@/lib/api-client'
 
 // This function fetches the services and its return type will be used to infer the service type
 async function getServices(filters: { category?: string; price?: string; sortBy?: string; page?: number; pageSize?: number }) {
-  const { category, price, sortBy } = filters
-  const [sortField, sortOrder] = sortBy?.split(':') || ['price', 'desc']
-  let filtered = allServices
-  if (category) filtered = filtered.filter(s => s.category.slug === category)
-  if (price) filtered = filtered.filter(s => s.price <= parseInt(price))
-  filtered = [...filtered].sort((a, b) => {
-    const dir = sortOrder === 'asc' ? 1 : -1
-    if (sortField === 'price') return (a.price - b.price) * dir
-    return dir
-  })
-  const page = filters.page && filters.page > 0 ? filters.page : 1
-  const pageSize = filters.pageSize && filters.pageSize > 0 ? filters.pageSize : 9
-  const start = (page - 1) * pageSize
-  const items = filtered.slice(start, start + pageSize)
-  return { items, total: filtered.length, page, pageSize }
-}
+  const params = new URLSearchParams()
+  if (filters.category) params.set('category', filters.category)
+  if (filters.price) params.set('maxPrice', filters.price)
+  if (filters.sortBy) params.set('sortBy', filters.sortBy)
+  if (filters.page) params.set('page', filters.page.toString())
+  if (filters.pageSize) params.set('limit', filters.pageSize.toString())
 
-// Infer the service type from the actual data being fetched
-import type { Service as ServiceCardType } from '@/types/service'
+  try {
+    const response = await ApiClient.services.list(params)
+    return {
+      items: response.data,
+      total: response.meta?.pagination?.total || 0,
+      page: response.meta?.pagination?.page || 1,
+      pageSize: filters.pageSize || 9
+    }
+  } catch (error) {
+    console.error('Failed to fetch services:', error)
+    return { items: [], total: 0, page: 1, pageSize: 9 }
+  }
+}
 
 interface ServicesPageProps {
   params: Promise<Record<string, string>>
@@ -35,7 +35,12 @@ interface ServicesPageProps {
 }
 
 async function getCategories() {
-  return allCategories
+  try {
+    return await ApiClient.categories.list()
+  } catch (error) {
+    console.error('Failed to fetch categories:', error)
+    return []
+  }
 }
 
 export default async function ServicesPage({ params, searchParams }: ServicesPageProps) {

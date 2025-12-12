@@ -8,18 +8,33 @@ import { FeaturedStewards } from '@/components/home/featured-stewards'
 import { Testimonials } from '@/components/home/testimonials'
 import { Footer } from '@/components/layout/footer'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { categories as mockCategories } from '@/data/categories'
-import { services } from '@/data/services'
 import type { CategoryWithCount } from '@/components/home/categories'
+import { ApiClient } from '@/lib/api-client'
+
+import { Service, Category } from '@/types/service'
 
 export default async function HomePage() {
-  const categories: CategoryWithCount[] = mockCategories.map((c) => ({
+  let categoriesData: Category[] = []
+  let servicesData: Service[] = []
+
+  try {
+    const [categoriesResponse, servicesResponse] = await Promise.all([
+      ApiClient.categories.list(),
+      ApiClient.services.list()
+    ])
+    categoriesData = categoriesResponse
+    servicesData = servicesResponse.data
+  } catch (error) {
+    console.error('Failed to fetch home page data:', error)
+  }
+
+  const categories: CategoryWithCount[] = categoriesData.map((c) => ({
     id: c.id,
     name: c.name,
     description: c.description ?? null,
     slug: c.slug,
     icon: null,
-    _count: { services: services.filter((s) => s.category.id === c.id).length },
+    _count: { services: servicesData.filter((s) => s.category.id === c.id).length },
   }))
 
   return (
@@ -28,7 +43,7 @@ export default async function HomePage() {
       <main>
         <Hero />
         <Categories categories={categories} />
-        <FeaturedServices />
+        <FeaturedServices services={servicesData} categories={categoriesData} />
         <HowItWorks />
         <Suspense fallback={<LoadingSpinner />}>
           <FeaturedStewards />

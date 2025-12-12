@@ -1,0 +1,255 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for both Clients and Stewards
+model User {
+  id                String    @id @default(cuid())
+  name              String
+  email             String    @unique
+  password          String    // Hashed password
+  phone             String?
+  address           String?
+  city              String?
+  image             String?
+  role              Role      @default(CLIENT)
+  isIdentityVerified Boolean  @default(false)
+  trustedContact    Json?     // Contact info for emergencies
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // NextAuth.js Fields
+  emailVerified     DateTime?
+  accounts          Account[]
+  sessions          Session[]
+
+  // Relations
+  stewardProfile    StewardProfile?
+  tasksAsClient     Task[]    @relation("ClientTasks")
+  tasksAsSteward    Task[]    @relation("StewardTasks")
+  sentMessages      ChatMessage[] @relation("SentMessages")
+  disputes          Dispute[]
+}
+
+enum Role {
+  CLIENT
+  STEWARD
+  ADMIN
+}
+
+// NextAuth.js Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Steward Profile (Extension of User)
+model StewardProfile {
+  id                    String    @id @default(cuid())
+  userId                String    @unique
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio                   String?
+  skills                String[]
+  languages             String[]
+  yearsOfExperience     Int       @default(0)
+  
+  // Verification Documents
+  verificationDocumentType  String?   // "NATIONAL_ID" or "PASSPORT"
+  verificationDocumentFront String?   // URL to front image or passport page
+  verificationDocumentBack  String?   // URL to back image (for National ID)
+  recommendationLetter      String?   // URL to recommendation letter
+  
+  rating                Float     @default(0)
+  completedTasks        Int       @default(0)
+  acceptanceRate        Float     @default(100)
+  backgroundCheckStatus String    @default("PENDING") // PENDING, CLEARED, REJECTED
+  
+  // Location data (Simulated PostGIS Point for now, can be raw lat/lng or use an extension)
+  latitude              Float?
+  longitude             Float?
+  serviceRadius         Int       @default(10) // in km
+
+  // Relations
+  services              ServiceOffering[]
+  availability          AvailabilitySlot[]
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+// Service Offering (What a steward offers)
+model ServiceOffering {
+  id                String    @id @default(cuid())
+  stewardId         String
+  steward           StewardProfile @relation(fields: [stewardId], references: [id], onDelete: Cascade)
+  category          String    // e.g., "Cleaning", "Plumbing"
+  title             String
+  description       String?
+  price             Float
+  currency          String    @default("UGX")
+  duration          Int       @default(60) // in minutes
+  images            String[]
+  pricingType       PricingType @default(HOURLY)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+enum PricingType {
+  HOURLY
+  FLAT
+}
+
+// Availability Slots
+model AvailabilitySlot {
+  id                String    @id @default(cuid())
+  stewardId         String
+  steward           StewardProfile @relation(fields: [stewardId], references: [id], onDelete: Cascade)
+  dayOfWeek         Int       // 0-6 (Sun-Sat)
+  startTime         String    // "09:00"
+  endTime           String    // "17:00"
+  isRecurring       Boolean   @default(true)
+  specificDate      DateTime? // If not recurring
+}
+
+// Task / Booking
+model Task {
+  id                String    @id @default(cuid())
+  clientId          String
+  client            User      @relation("ClientTasks", fields: [clientId], references: [id])
+  stewardId         String
+  steward           User      @relation("StewardTasks", fields: [stewardId], references: [id])
+  
+  status            TaskStatus @default(OPEN)
+  category          String
+  description       String?
+  address           String
+  latitude          Float?
+  longitude         Float?
+  
+  agreedPrice       Float
+  currency          String     @default("UGX")
+  pricingType       PricingType
+  
+  scheduledStart    DateTime
+  scheduledEnd      DateTime?
+  actualStart       DateTime?
+  actualEnd         DateTime?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  transactions      Transaction[]
+  messages          ChatMessage[]
+  dispute           Dispute?
+}
+
+enum TaskStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  DONE
+  CANCELLED
+  DISPUTED
+}
+
+// Financial Transaction
+model Transaction {
+  id                String    @id @default(cuid())
+  taskId            String
+  task              Task      @relation(fields: [taskId], references: [id])
+  amount            Float
+  platformFee       Float
+  type              TransactionType
+  status            TransactionStatus @default(PENDING)
+  stripePaymentId   String?
+  
+  createdAt         DateTime  @default(now())
+}
+
+enum TransactionType {
+  CHARGE
+  PAYOUT
+  REFUND
+  TIP
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+// Chat Message
+model ChatMessage {
+  id                String    @id @default(cuid())
+  taskId            String
+  task              Task      @relation(fields: [taskId], references: [id])
+  senderId          String
+  sender            User      @relation("SentMessages", fields: [senderId], references: [id])
+  content           String
+  contentType       String    @default("TEXT") // TEXT, IMAGE, LOCATION
+  readAt            DateTime?
+  
+  createdAt         DateTime  @default(now())
+}
+
+// Dispute
+model Dispute {
+  id                String    @id @default(cuid())
+  taskId            String    @unique
+  task              Task      @relation(fields: [taskId], references: [id])
+  openerId          String
+  opener            User      @relation(fields: [openerId], references: [id])
+  reason            String
+  status            DisputeStatus @default(OPEN)
+  resolution        String?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+}

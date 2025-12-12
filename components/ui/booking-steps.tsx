@@ -31,7 +31,7 @@ export function BookingSteps({ serviceId }: BookingStepsProps) {
     if (!scheduledDate || !address) return
     setIsSubmitting(true)
     try {
-      const id = createBooking({
+      const id = await createBooking({
         serviceId,
         scheduledDate: new Date(scheduledDate),
         scheduledTime,
@@ -39,6 +39,8 @@ export function BookingSteps({ serviceId }: BookingStepsProps) {
         notes,
       })
       router.push(`/booking/confirmation/${id}`)
+    } catch (error) {
+      console.error('Booking failed:', error)
     } finally {
       setIsSubmitting(false)
     }

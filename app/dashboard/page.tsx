@@ -59,11 +59,20 @@ export default function DashboardPage() {
       <Header />
       <main className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Welcome back, {user.name}! Here's an overview of your account.
-            </p>
+          <div className="mb-8 flex justify-between items-end">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+              <p className="mt-1 text-sm text-gray-500">
+                Welcome back, {user.name}! Here's an overview of your account.
+              </p>
+            </div>
+            {isSteward && (
+              <Link href="/dashboard/services/create">
+                <div className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-chazon-primary text-primary-foreground hover:bg-chazon-primary/90 h-10 px-4 py-2 text-white shadow-sm">
+                  + Add Service
+                </div>
+              </Link>
+            )}
           </div>
 
           {/* Quick Stats */}

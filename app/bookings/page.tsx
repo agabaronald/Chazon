@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from 'react'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import Link from 'next/link'
@@ -7,11 +8,7 @@ import { Calendar, Clock, MapPin, CheckCircle, XCircle, Clock3 } from 'lucide-re
 import { ImageWithFallback } from '@/components/ui/image-with-fallback'
 import { useBookingsStore } from '@/store/bookings'
 import { useAuthStore } from '@/store/auth'
-
-function useUserBookings() {
-  const { bookings } = useBookingsStore()
-  return bookings
-}
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 function getStatusBadge(status: string) {
   switch (status) {
@@ -49,7 +46,13 @@ function getStatusBadge(status: string) {
 
 export default function BookingsPage() {
   const { isAuthenticated } = useAuthStore()
-  const bookings = useUserBookings()
+  const { bookings, isLoading, error, fetchBookings } = useBookingsStore()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchBookings()
+    }
+  }, [isAuthenticated, fetchBookings])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -63,7 +66,15 @@ export default function BookingsPage() {
             </p>
           </div>
 
-          {isAuthenticated && bookings.length > 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner />
+            </div>
+          ) : error ? (
+            <div className="text-center py-12 text-red-600">
+              <p>{error}</p>
+            </div>
+          ) : isAuthenticated && bookings.length > 0 ? (
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
               <ul className="divide-y divide-gray-200">
                 {bookings.map((booking) => {

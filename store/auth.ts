@@ -1,12 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@/types/user'
-import { mockUser } from '@/data/users'
+import { ApiClient } from '@/lib/api-client'
 
 type AuthState = {
   isAuthenticated: boolean
   user: User | null
-  login: (email: string, name?: string) => void
+  login: (user: User) => void
   logout: () => void
   updateUser: (updates: Partial<User>) => void
 }
@@ -16,8 +16,7 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       isAuthenticated: false,
       user: null,
-      login: (email, name) => {
-        const user: User = { ...mockUser, email, name: name || mockUser.name }
+      login: (user) => {
         set({ isAuthenticated: true, user })
       },
       logout: () => set({ isAuthenticated: false, user: null }),
