@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
+import { authConfig } from "./auth.config"
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -12,12 +13,9 @@ const loginSchema = z.object({
 })
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
-  pages: {
-    signIn: "/auth/signin",
-    newUser: "/auth/signup",
-  },
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -40,22 +38,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        // @ts-ignore
-        token.role = user.role
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string
-        // @ts-ignore
-        session.user.role = token.role as string
-      }
-      return session
-    },
-  },
 })

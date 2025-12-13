@@ -9,6 +9,7 @@ import { ImageWithFallback } from '@/components/ui/image-with-fallback'
 import { useBookingsStore } from '@/store/bookings'
 import { useAuthStore } from '@/store/auth'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { PaymentButton } from '@/components/payment-button'
 
 function getStatusBadge(status: string) {
   switch (status) {
@@ -161,6 +162,15 @@ export default function BookingsPage() {
                                 </div>
                               </div>
                             </div>
+                            {booking.status === 'PENDING' && (
+                              <div className="mt-4 flex justify-end" onClick={(e) => e.preventDefault()}>
+                                <PaymentButton 
+                                  taskId={booking.id} 
+                                  amount={booking.service.price} 
+                                  currency={booking.service.currency || 'UGX'} 
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                       </Link>

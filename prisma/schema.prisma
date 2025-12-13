@@ -201,7 +201,9 @@ model Transaction {
   platformFee       Float
   type              TransactionType
   status            TransactionStatus @default(PENDING)
-  stripePaymentId   String?
+  providerTransactionId   String?   // External ID from Payment Provider (e.g., Flutterwave)
+  paymentMethod     String?   // e.g., "card", "mobile_money", "bank_transfer"
+  metadata          Json?     // Store additional provider response data
   
   createdAt         DateTime  @default(now())
 }
